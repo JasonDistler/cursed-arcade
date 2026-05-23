@@ -145,6 +145,14 @@ cursed-arcade/
 
 ---
 
+## License
+
+[CC0 1.0 Universal](LICENSE) — public domain dedication. Do whatever you
+want with the code, art, and audio. No attribution required, no warranty
+provided.
+
+---
+
 ## Warnings
 
 - All pieces scream in 440 Hz when cleared.
