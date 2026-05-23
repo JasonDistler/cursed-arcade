@@ -94,8 +94,18 @@ procedurally generated waves of escalating health and speed.
 Three ways to run, easiest first.
 
 ### Windows (one click)
-Double-click `start.bat`. It checks for Node, picks an open port between
-3000–3099, and opens your default browser to the arcade.
+Double-click `start.bat`. It will:
+
+1. Verify Node.js is installed and on `PATH` (prints a friendly install
+   prompt with a download link if it isn't).
+2. Verify `server.js` is sitting next to it.
+3. Run `server.js`, which scans ports 3000–3099 for the first open one,
+   binds to it, and auto-launches your default browser to the URL.
+4. Stay open after the server stops so you can read any error output
+   instead of the window vanishing.
+
+If you don't have Node yet, grab the LTS installer from
+<https://nodejs.org/> and rerun `start.bat`.
 
 ### macOS (one click)
 Double-click `start.command`. Same behavior as Windows.
