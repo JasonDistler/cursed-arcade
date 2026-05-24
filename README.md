@@ -123,6 +123,27 @@ Then open the printed URL (usually `http://localhost:3000/`).
 Open `index.html` directly in a modern browser. Everything works — the Node
 server is only there for convenience and a clean origin.
 
+### Play from another device on the same Wi-Fi / LAN
+The server binds to all network interfaces (`0.0.0.0`), so any phone, tablet,
+or other PC on the same network can join.
+
+1. Start the server on the host machine. The console prints both URLs:
+
+   ```
+   Local         http://localhost:3000/
+   Network       http://192.168.1.42:3000/   (Wi-Fi)
+   ```
+
+2. On the **first launch on Windows**, a Windows Defender Firewall dialog
+   pops up. Choose **Allow access** for **Private networks**. (If you miss
+   the dialog, you can re-enable it later under
+   *Settings → Network & Internet → Windows Firewall → Allow an app through firewall*.)
+
+3. On the other device, open the **Network** URL in any browser. That's it.
+
+If you want to lock it back to loopback only, run with
+`HOST=127.0.0.1 node server.js`.
+
 ---
 
 ## Tech

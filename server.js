@@ -2,13 +2,29 @@
 
 const http = require("http");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { exec } = require("child_process");
 
 const ROOT = __dirname;
 const START_PORT = parseInt(process.env.PORT, 10) || 3000;
 const MAX_PORT_TRIES = 100;
-const HOST = "127.0.0.1";
+// 0.0.0.0 binds all IPv4 interfaces so other devices on the LAN can connect.
+// Set HOST=127.0.0.1 in the env to restrict to loopback only.
+const HOST = process.env.HOST || "0.0.0.0";
+
+function getLanIPs() {
+  const ifaces = os.networkInterfaces();
+  const out = [];
+  for (const name of Object.keys(ifaces)) {
+    for (const iface of ifaces[name] || []) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        out.push({ name, address: iface.address });
+      }
+    }
+  }
+  return out;
+}
 
 const MIME = {
   ".html":  "text/html; charset=utf-8",
@@ -129,12 +145,29 @@ function openBrowser(target) {
     process.exit(1);
   });
   server.listen(port, HOST, () => {
-    const url = `http://localhost:${port}/`;
-    console.log(`  Listening on  ${url}`);
+    const localUrl = `http://localhost:${port}/`;
+    const lanIPs = getLanIPs();
+    console.log(`  Local         ${localUrl}`);
+    if (HOST === "0.0.0.0" || HOST === "::") {
+      if (lanIPs.length === 0) {
+        console.log(`  Network       (no LAN interface detected)`);
+      } else {
+        for (const { name, address } of lanIPs) {
+          console.log(`  Network       http://${address}:${port}/   (${name})`);
+        }
+        console.log(`  Other devices on your network can use the Network URL above.`);
+        if (process.platform === "win32") {
+          console.log(`  Windows may pop a firewall dialog the first time -- choose`);
+          console.log(`  "Allow access" on Private networks for LAN play.`);
+        }
+      }
+    } else {
+      console.log(`  Network       disabled (HOST=${HOST}, loopback only)`);
+    }
     console.log(`  Serving from  ${ROOT}`);
     console.log(`  Press Ctrl+C to stop.`);
     console.log("");
-    openBrowser(url);
+    openBrowser(localUrl);
   });
 
   const shutdown = (sig) => {
